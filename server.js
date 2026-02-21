@@ -39,7 +39,7 @@ app.post('/admin/add-product', (req, res) => {
     (err) => {
       if (err) {
         console.log(err);
-        return res.redirect('/admin/add-product');
+        return res.send(err.message);
       }
 
       return res.redirect('/admin/add-product');
