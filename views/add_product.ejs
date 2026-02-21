@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include('head') %>
     <title>Add Products</title>
     <link rel="stylesheet" href="/css/form.css">
 </head>
 <body>
+    <%- include('nav') %>
     <main>
     <div class="head">
         <h1>Add Products</h1>
     </div>
+        <% if(success.length > 0){ %>
+        <p style="color:green"><%= success %></p>
+    <% } %>
+
+    <% if(error.length > 0){ %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
     <div class="form">
     <form method="POST" action="/admin/add-product">
-        <label>Serial No.:</label>
+        <label>Serial No.</label>
         <input type="number" placeholder="Enter product serial no." name="serial">
         <label>Name:</label>
         <input type="text" placeholder="Enter name" name="name">

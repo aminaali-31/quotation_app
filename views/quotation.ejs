@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('head') %>
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/quotation.css">
+</head>
+<body>
+    <%- include('nav') %>
+    <main>
+        <h2>Quotation Builder</h2>
+        <div class="content">
+        <div style="display:flex; gap:30px" class="maker">
+        <!-- LEFT SIDE -->
+        <div style="flex:2" class="left">
+        <% Object.keys(products).forEach(category=>{ %>
+        <h3><%= category %></h3>
+        <label>Add Product</label>
+        <select class="product-select"
+                onchange="addProduct(this, '<%= category %>')">
+        <option value="">Select Product</option>
+        <% products[category].forEach(product=>{ %>
+        <option
+        data-name="<%= product.description %>"
+        data-price="<%= product.price %>"
+        data-cost="<%= product.cost %>">
+        <%= product.description %>
+        </option>
+        <% }) %>
+        </select>
+        <!-- Selected Product List -->
+        <div id="list-<%= category %>" class="product-list"></div>
+        <hr>
+        <% }) %>
+        </div>
+        <!-- RIGHT SIDE -->
+        <div style="flex:1; border-left:1px solid #ddd; padding-left:20px" class="right">
+        <h3>Quotation Summary</h3>
+        <p>Margin: <span id="margin">0</span></p>
+        <p>Profit: <span id="profit">0</span></p>
+        </div>
+        </div>
+        <hr>
+        <h3>Total Cost: <span id="totalCost">0</span></h3>
+        <button id="btn" onclick="downloadQuotation()">
+        Download Quotation PDF
+        </button> 
+        </div>
+    </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script>
+
+let cart = {};
+let totalCost = 0;
+let totalPrice = 0;
+
+/* ------------------------------
+   Add Product to Category Cart
+--------------------------------*/
+function addProduct(selectElement, category) {
+
+    let option = selectElement.options[selectElement.selectedIndex];
+    if (!option.value) return;
+
+    let product = {
+        id: Date.now(),
+        name: option.dataset.name,
+        price: parseFloat(option.dataset.price),
+        cost: parseFloat(option.dataset.cost),
+        qty: 1
+    };
+
+    // Create category cart if not exists
+    if (!cart[category]) {
+        cart[category] = [];
+    }
+
+    cart[category].push(product);
+
+    renderProductList(category);
+    calculateTotals();
+    selectElement.value = "";
+}
+
+/* ------------------------------
+   Render Category Product List
+--------------------------------*/
+function renderProductList(category) {
+
+    let listDiv = document.getElementById("list-" + category);
+    listDiv.innerHTML = "";
+
+    let products = cart[category] || [];
+
+    products.forEach(product => {
+
+        let div = document.createElement("div");
+        div.className = "product-row";
+        div.style.display = "flex";
+        div.style.gap = "10px";
+        div.style.marginBottom = "8px";
+
+        div.innerHTML = `
+            <span style="flex:2">${product.name}</span>
+
+            <input type="number"
+                   min="1"
+                   value="${product.qty}"
+                   style="width:70px"
+                   onchange="updateQty('${category}', ${product.id}, this.value)" />
+
+            <span>Price: ${product.price}</span>
+            <span>Cost: ${product.cost}</span>
+
+            <button onclick="removeProduct('${category}', ${product.id})">X</button>
+        `;
+
+        listDiv.appendChild(div);
+    });
+}
+/* ------------------------------
+   Remove Product
+--------------------------------*/
+
+function updateQty(category, id, qty) {
+
+    qty = parseInt(qty);
+    if (qty < 1 || isNaN(qty)) qty = 1;
+
+    let products = cart[category];
+    if (!products) return;
+
+    let product = products.find(p => p.id === id);
+    if (product) product.qty = qty;
+
+    calculateTotals();
+}
+function removeProduct(category, id) {
+
+    cart[category] = (cart[category] || [])
+        .filter(p => p.id !== id);
+
+    renderProductList(category);
+    calculateTotals();
+}
+/* ------------------------------
+   Calculate Summary Metrics
+--------------------------------*/
+function calculateTotals() {
+
+    let totalCost = 0;
+    let totalPrice = 0;
+
+    Object.values(cart).forEach(products => {
+
+        products.forEach(p => {
+            totalCost += p.cost * p.qty;
+            totalPrice += p.price * p.qty;
+        });
+
+    });
+
+    let profit = totalPrice - totalCost;
+    let margin = totalPrice ? ((profit / totalPrice) * 100) : 0;
+
+    document.getElementById("totalCost").innerText = totalCost.toFixed(2);
+    document.getElementById("profit").innerText = profit.toFixed(2);
+    document.getElementById("margin").innerText = margin.toFixed(2) + "%";
+}
+
+/* ------------------------------
+   Download Quotation
+--------------------------------*/
+function downloadQuotation() {
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    let rows = [];
+    let totalCost = 0;
+    let totalPrice = 0;
+    const quotationNumber = "QT-" + Date.now();
+    const date = new Date().toLocaleDateString();
+    const companyName = "Your Company Name";
+    const companyAddress = "Your Address Line";
+    const companyPhone = "+92-XXX-XXXXXXX";
+    // Convert cart object into table rows
+    Object.keys(cart).forEach(category => {
+
+        cart[category].forEach(product => {
+
+            let subtotalPrice = product.price * product.qty;
+            let subtotalCost = product.cost * product.qty;
+
+            totalCost += subtotalCost;
+            totalPrice += subtotalPrice;
+
+            rows.push([
+                category,
+                product.name,
+                product.qty,
+                product.price.toFixed(2),
+                subtotalPrice.toFixed(2)
+            ]);
+        });
+
+    });
+
+    let profit = totalPrice - totalCost;
+    let margin = totalPrice ? ((profit / totalPrice) * 100).toFixed(2) : 0;
+
+    // Title
+    doc.setFontSize(18);
+    doc.text(companyName, 14, 20);
+
+    doc.setFontSize(10);
+    doc.text(companyAddress, 14, 26);
+    doc.text(companyPhone, 14, 31);
+
+    doc.setFontSize(14);
+    doc.text("QUOTATION", 150, 20);
+
+    doc.setFontSize(10);
+    doc.text("Quotation No: " + quotationNumber, 150, 26);
+    doc.text("Date: " + date, 150, 31);
+
+    // Table
+    doc.autoTable({
+        startY: 70,
+        head: [["Category", "Product", "Qty", "Unit Price", "Line Total"]],
+        body: rows,
+        theme: "grid",
+        styles: { fontSize: 9 }
+    });
+
+    let finalY = doc.lastAutoTable.finalY + 10;
+
+    // Summary
+    doc.setFontSize(12);
+    doc.text(`Total Price: ${totalPrice.toFixed(2)}`, 14, finalY);
+    
+    doc.line(14, finalY + 35, 70, finalY + 35);
+    doc.text("Authorized Signature", 14, finalY + 40);
+
+    // ======= Footer =======
+    doc.setFontSize(8);
+    doc.text("Thank you for your business.", 14, 285);
+
+    doc.save("Quotation-" + quotationNumber + ".pdf");
+}
+</script>
+</body>
+</html>

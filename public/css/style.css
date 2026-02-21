@@ -1,0 +1,47 @@
+main {
+    background-color: aliceblue;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+}
+.content {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+}
+.form {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row-reverse;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 100%;
+    overflow: auto;
+}
+.table {
+    min-width: 700px; /* adjust based on your content */
+    border-collapse: collapse;
+}
+.head {
+    display: flex;
+}
+.content button {
+    background-color: white;
+    box-shadow:  2px 2px rgb(30, 30, 30);
+    font-size: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    width: 160px;
+}
+@media (max-width:600px)
+{
+    main {
+        padding: 10px;
+    }
+}

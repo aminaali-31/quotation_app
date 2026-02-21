@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('head') %>
+    <title>Edit</title>
+    <link rel="stylesheet" href="/css/form.css">
+</head>
+<body>
+    <%- include('nav') %>
+    <main>
+    <div class="head">
+        <h1>Edit Product</h1>
+    </div>
+    <div class="form">
+    <form action="/admin/update-product/<%= product.serial_no %>" method="POST">
+        <label>Name:</label>
+        <input name="description"  value="<%= product.description %>">
+        <label>Customer Price:</label>
+        <input name="price"  value="<%= product.price %>">
+        <label>Cost:</label>
+        <input name="cost"  value="<%= product.cost %>">
+        <label>Category</label>
+        <select name="category">
+        <% categories.forEach(c => { %>
+        <option value="<%= c.id %>"
+        <%= product.category_id==c.id ? "selected" : "" %>>
+        <%= c.name %>
+       </option>
+        <% }) %>
+        </select>
+        <button type="submit">Update</button>
+    </form>
+    </div>
+    </main>
+</body>
+</html>
