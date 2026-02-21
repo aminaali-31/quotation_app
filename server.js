@@ -20,7 +20,7 @@ app.get('/admin/add-product', (req,res) => {
   db.query("SELECT * FROM categories", (err,results) => {
     if (err){
       console.log(err);
-      return res.render('add_product', {categories:''});
+      return res.send("Database Error")
     }
     // Else send data
     return res.render('add_product', { categories: results})
