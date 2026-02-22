@@ -237,6 +237,6 @@ async function saveQuotation() {
         });
 
         // Redirect
-        window.location.href = "/quotation";
+        window.location.href = "/admin/quotation";
     }
 }

@@ -93,7 +93,7 @@ app.get('/quotations/:id', (req, res) => {
 });
 
 app.post("/quotation/save", (req, res) => {
-    const { quote_no, grand_total,title, margin, profit, is_published, items } = req.body;
+    const { quote_no, grand_total ,title, margin, profit, is_published, items } = req.body;
     const insertQuotation = `
         INSERT INTO quotations 
         (quote_no, grand_total ,title, margin, profit, is_published)
