@@ -21,29 +21,142 @@ app.use(session({
 
 app.use(flash());
 
-async function createAdmin() {
-    const hash = await bcrypt.hash("admin123", 10);
-
-    db.query(
-        "INSERT INTO admin(username,password) VALUES(?,?)",
-        ["admin", hash]
-    );
-}
-
-createAdmin();
 function isAdmin(req,res,next){
     if(req.session.admin && req.session){
         return next();
     }
     res.redirect("/admin/login");
 }
-// Test route
+// ROutes
 app.get('/', (req, res) => {
-  res.send("Quotation App is Running");
+    db.query(`
+        SELECT 
+            quote_no,
+            title,
+            grand_total,
+            last_updated
+        FROM quotations
+        WHERE is_published = 1
+        ORDER BY last_updated DESC;
+    `,
+    (err, quotations) => {
+        if(err){
+            console.log(err);
+            return res.status(500).send("Database error");
+        }
+        res.render('quote-list', { quotations });
+    });
+});
+
+app.get('/quotations/:id', (req, res) => {
+    db.query(
+    `SELECT id, quote_no, title, grand_total , last_updated
+     FROM quotations 
+     WHERE quote_no = ? AND is_published = 1`,
+    [req.params.id],
+    (err, quotationResult) => {
+        if (err) throw err;
+
+        if (!quotationResult.length) {
+            return res.render('quote-detail', {
+                quotation: null,
+                items: [],
+                total: 0
+            });
+        }
+
+        const quotationId = quotationResult[0].id; // ⭐ IMPORTANT
+
+        db.query(
+            `SELECT 
+                qi.name,
+                qi.category,
+                qi.qty,
+                p.price
+             FROM quotation_items qi
+             LEFT JOIN products p 
+             ON p.serial_no = qi.product_id
+             WHERE qi.quote_id = ?`,
+            [quotationId], // ✅ use primary key id
+            (err, items) => {
+                if (err) throw err;
+                let total = items.reduce((sum, item) =>
+                    sum + ((item.price || 0) * (item.qty || 0)),
+                0);
+                res.render('quote-detail', {
+                    quotation: quotationResult[0],
+                    items,
+                    total
+                });
+            });
+    });
+});
+
+app.post("/quotation/save", (req, res) => {
+    const { quote_no, grand_total,title, margin, profit, is_published, items } = req.body;
+    const insertQuotation = `
+        INSERT INTO quotations 
+        (quote_no, grand_total ,title, margin, profit, is_published)
+        VALUES (?, ?,?, ?, ?, ?)
+    `;
+    // Insert quotation header first
+    db.query(insertQuotation,
+        [quote_no, grand_total,title, margin, profit, is_published],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).json({ message: "Quotation save failed" });
+            }
+            const quoteId = result.insertId;
+            // If no items → return response
+            if (!items || Object.keys(items).length === 0) {
+                return res.json({ message: "Quotation saved successfully" });
+            }
+            let queries = [];
+            // Prepare item insert queries
+            for (let category in items) {
+                for (let product of items[category]) {
+                    queries.push(new Promise((resolve, reject) => {
+                        db.query(
+                            `INSERT INTO quotation_items 
+                            (quote_id, product_id, name, category, qty, price, cost)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                            [
+                                quoteId,
+                                product.id,
+                                product.name,
+                                category,
+                                product.qty,
+                                product.price,
+                                product.cost
+                            ],
+                            (err) => {
+                                if (err) reject(err);
+                                else resolve();
+                            }
+                        );
+                    }));
+                }
+            }
+            // Execute all item inserts
+            Promise.all(queries)
+                .then(() => {
+                    res.json({
+                        success: true,
+                        message: "Quotation saved successfully"
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        success: false,
+                        message: "Item save failed"
+                    });
+                });
+        });
 });
 // Admin Routes
-
-app.get("/admin/dashboard", isAdmin, (req,res)=>{
+app.get("/admin", isAdmin, (req,res)=>{
 
     db.query(`SELECT products.*, categories.name AS category_name
               FROM products
@@ -108,7 +221,7 @@ app.get("/admin/delete-product/:id", isAdmin, (req,res)=>{
                 return res.send("Delete error");
             }
 
-            res.redirect("/admin/dashboard");
+            res.redirect("/admin");
         }
     );
 
@@ -152,7 +265,7 @@ app.post("/admin/update-product/:id", isAdmin, (req,res)=>{
                 return res.send("Update error");
             }
 
-            res.redirect("/admin/dashboard");
+            res.redirect("/admin");
         }
     );
 
@@ -185,7 +298,7 @@ app.post("/admin/login", (req,res)=>{
             }
 
             req.session.admin = admin;
-            res.redirect("/admin/dashboard");
+            res.redirect("/admin");
         }
     );
 

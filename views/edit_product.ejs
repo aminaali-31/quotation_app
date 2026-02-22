@@ -16,9 +16,9 @@
         <label>Name:</label>
         <input name="description"  value="<%= product.description %>">
         <label>Customer Price:</label>
-        <input name="price"  value="<%= product.price %>">
+        <input name="price"  value="<%= product.price.toLocaleString() %>">
         <label>Cost:</label>
-        <input name="cost"  value="<%= product.cost %>">
+        <input name="cost"  value="<%= product.cost.toLocaleString() %>">
         <label>Category</label>
         <select name="category">
         <% categories.forEach(c => { %>

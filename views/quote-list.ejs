@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('head') %>
+    <title>Quotation Details</title>
+    <style>
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        main h2 {
+            font-size: 40px;
+            padding: 20px;
+        }
+        #text {
+            font-size: 20px;
+        }
+        .quotation-grid {
+            display: grid;
+            grid-template-columns: repeat(2,400px);
+            gap: 20px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <main>
+        <h2>Published Quotations</h2>
+        <p id="text">Explore our wide range of quotations</p>
+        <div class="quotation-grid">
+        <% quotations.forEach(q => { %>
+            <div class="quotation-card card">
+                <p class="card-header">Quote no. <%= q.quote_no %></p>
+                <div class="card-body">
+                <h3 class="card-title"><%= q.title %></h3>
+                <p class="card-text"><strong>Estimated Price:</strong> <%= q.grand_total.toLocaleString() %></p>
+                <a href="/quotations/<%= q.quote_no %>" class="btn btn-primary">View</a>
+                </div>
+                <div class="card-footer text-body-secondary">
+                    <strong>Last Updated:</strong><%= new Date(q.last_updated).toDateString() %>
+                </div>
+            </div>
+        <% }) %>
+        </div>
+    </main>
+</body>
+</html>

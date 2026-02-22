@@ -8,11 +8,12 @@
 <body>
     <%- include('nav') %>
     <main>
-        <h2>Product Dashboard</h2>
+        <h2>Admin Panel</h2>
+        <p>Build perfect solar quotations</p>
         <div class="content">
             <div class="form">
         <button onclick="window.location.href='/admin/add-product'"><strong>+</strong> Add Product</button>
-        <table border="1" cellpadding="8" class="table table- table-bordered">
+        <table border="1" cellpadding="8" class="table table-striped table-bordered">
         <thead>
         <tr>
             <th class="table-dark">Serial No</th>
@@ -28,8 +29,8 @@
         <tr>
             <td><%= product.serial_no %></td>
             <td><%= product.description %></td>
-            <td><%= product.price %></td>
-            <td><%= product.cost %></td>
+            <td><%= product.price.toLocaleString() %></td>
+            <td><%= product.cost.toLocaleString() %></td>
             <td><%= product.category_name %></td>
             <td>
             <a href="/admin/edit-product/<%= product.serial_no %>" style="color: rgb(0, 115, 255); margin-right:15px;">
