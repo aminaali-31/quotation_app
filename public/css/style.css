@@ -25,7 +25,6 @@
     flex-wrap: wrap;
     width: 100%;
     max-width: 800px;
-    overflow: auto;
 }
 .table {
     width: 700px; /* adjust based on your content */

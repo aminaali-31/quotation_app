@@ -253,7 +253,7 @@ app.post('/admin/add-product', isAdmin,(req, res) => {
     `INSERT INTO products 
      (description, price, cost, category_id)
      VALUES ( ?, ?, ?, ?)`,
-    [serial, name, cPrice, cost, category],
+    [name, cPrice, cost, category],
     (err) => {
       if (err) {
         console.log(err);
