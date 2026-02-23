@@ -12,6 +12,18 @@
             align-items: flex-start;
             padding: 20px;
         }
+        @media (max-width:700px)
+        {
+            .table th {
+                width: 20%;
+            }
+            #prod {
+                width: 100%;
+            }
+            #cat {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -34,8 +46,8 @@
         <table cellpadding="10" class="table table-hover table-striped table-bordered align-middle">
         <thead>
         <tr>
-            <th scope="col" class="text-start table-dark">Product</th>
-            <th scope="col" class="text-start table-dark">Category</th>
+            <th scope="col" class="text-start table-dark" id="prod">Product</th>
+            <th scope="col" class="text-start table-dark" id="cat">Category</th>
             <th scope="col" class="text-center table-dark">Qty</th>
             <th scope="col" class="text-end table-dark">Unit Price</th>
             <th scope="col" class="text-end table-dark">Total</th>
@@ -45,7 +57,7 @@
         <% items.forEach(item => { %>
         <tr>
             <th scope="row" class="text-start"><%= item.name %></th>
-            <td class="text-start"><%= item.category %></td>
+            <td class="text-start" id="cat"><%= item.category %></td>
             <td class="text-center"><%= item.qty %></td>
             <td class="text-end"><%= item.price.toLocaleString() %></td>
             <td class="text-end"><%= (item.price * item.qty).toLocaleString() %></td>

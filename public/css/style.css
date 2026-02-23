@@ -28,7 +28,7 @@
     overflow: auto;
 }
 .table {
-    min-width: 700px; /* adjust based on your content */
+    width: 700px; /* adjust based on your content */
     border-collapse: collapse;
 }
 .head {
@@ -49,4 +49,62 @@
     main {
         padding: 10px;
     }
-}
+    .table {
+        border: 0;
+        padding: none;
+    }
+    .table thead {
+    display: none;
+    }
+    .table tr {
+        display: block;
+        position: relative;
+        margin-bottom: 18px;
+        border: none;
+        padding: none;
+        background: #fff;
+        box-shadow: 4px 0px 12px rgba(0,0,0,0.06);
+    }
+    .table tbody td:nth-child(odd) {
+        background: #ffffff; 
+    }
+
+    .table tbody td:nth-child(even) {
+        background: #f8f9fa;  /* light stripe */
+    }
+    .table td {
+        display: flex;
+        align-items: center;      /* vertical center */
+        border: none;
+        font-size: 14px;
+        height: 50px;
+    }
+
+    /* DESCRIPTION → top left */
+    .table td:nth-child(2) {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* ACTIONS → top right */
+    .table td:nth-child(6) {
+        position: absolute;
+        vertical-align: middle;
+        top: 0px;
+        right: 15px;
+        font-size: 18px;
+    }
+
+    /* Optional: make price/cost/category softer */
+    .table td:nth-child(3),
+    .table td:nth-child(4),
+    .table td:nth-child(5) {
+        color: #666;
+    }
+
+    /* Hide Sr column on mobile */
+    .table td:nth-child(1) {
+        display: none;
+    }
+
+ }

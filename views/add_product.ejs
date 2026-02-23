@@ -20,14 +20,13 @@
     <% } %>
     <div class="form">
     <form method="POST" action="/admin/add-product">
-        <label>Serial No.</label>
-        <input type="number" placeholder="Enter product serial no." name="serial">
         <label>Name:</label>
         <input type="text" placeholder="Enter name" name="name">
         <label>Customer Price:</label>
         <input type="number" placeholder="Enter customer price" name="cPrice">
         <label>Cost:</label>
         <input type="number" placeholder="Enter cost" name="cost">
+        <label>Category:</label>
         <select name="category">
             <% categories.forEach(category => { %>
             <option value="<%= category.id %>">

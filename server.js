@@ -176,7 +176,64 @@ app.get("/admin", isAdmin, (req,res)=>{
 
 });
 
-app.get('/admin/add-product', (req,res) => {
+app.get('/admin/quotations',isAdmin, (req,res) => {
+    db.query(`
+        SELECT * FROM quotations
+        ORDER BY created_at`,
+
+        (err,quotations) => {
+            if(err){
+                console.log(err);
+                return res.status(500).send("Database error");
+            }
+            res.render('quote-list', { quotations });
+    });
+});
+
+app.get('admin/quotations/:id',isAdmin, (req, res) => {
+    db.query(
+    `SELECT id, quote_no, title, grand_total , last_updated
+     FROM quotations 
+     WHERE quote_no = ?`,
+    [req.params.id],
+    (err, quotationResult) => {
+        if (err) throw err;
+
+        if (!quotationResult.length) {
+            return res.render('quote-detail', {
+                quotation: null,
+                items: [],
+                total: 0
+            });
+        }
+
+        const quotationId = quotationResult[0].id; // ⭐ IMPORTANT
+
+        db.query(
+            `SELECT 
+                qi.name,
+                qi.category,
+                qi.qty,
+                p.price
+             FROM quotation_items qi
+             LEFT JOIN products p 
+             ON p.serial_no = qi.product_id
+             WHERE qi.quote_id = ?`,
+            [quotationId], // ✅ use primary key id
+            (err, items) => {
+                if (err) throw err;
+                let total = items.reduce((sum, item) =>
+                    sum + ((item.price || 0) * (item.qty || 0)),
+                0);
+                res.render('admin-quote', {
+                    quotation: quotationResult[0],
+                    items,
+                    total
+                });
+            });
+    });
+});
+app.get('/admin/add-product',isAdmin, (req,res) => {
   db.query("SELECT * FROM categories", (err,results) => {
     if (err){
       console.log(err);
@@ -188,14 +245,14 @@ app.get('/admin/add-product', (req,res) => {
   
 });
 
-app.post('/admin/add-product', (req, res) => {
+app.post('/admin/add-product', isAdmin,(req, res) => {
 
-  const { serial, name, cPrice, cost, category } = req.body;
+  const { name, cPrice, cost, category } = req.body;
 
   db.query(
     `INSERT INTO products 
-     (serial_no, description, price, cost, category_id)
-     VALUES (?, ?, ?, ?, ?)`,
+     (description, price, cost, category_id)
+     VALUES ( ?, ?, ?, ?)`,
     [serial, name, cPrice, cost, category],
     (err) => {
       if (err) {
@@ -333,23 +390,7 @@ app.get("/admin/quotation", isAdmin, (req,res)=>{
     });
 
 });
-app.get("/quotation/download",(req,res)=>{
 
-    const doc = new PDFDocument();
-
-    res.setHeader(
-        "Content-Disposition",
-        "attachment; filename=quotation.pdf"
-    );
-    doc.font('Times-Roman')
-    doc.fontSize(20);
-    doc.text(`Quotation`, {
-      align:'center'
-    })
-    doc.end();
-
-    doc.pipe(res);
-});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
