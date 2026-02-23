@@ -16,21 +16,25 @@
         <h3>Quotation Title:</h3>
         <input type="text" placeholder="Title" name="title" id="title">
         <% Object.keys(products).forEach(category=>{ %>
+        <div class="d-flex" style="justify-content: space-between; align-items: center;margin-top: 10px;">
         <h3><%= category %></h3>
-        <label>Add Product</label>
-        <select class="product-select"
+        <div class="product-picker">
+            <button type="button" class="add-btn">+</button>
+            <select class="product-select"
                 onchange="addProduct(this, '<%= category %>')">
-        <option value="">Select Product</option>
-        <% products[category].forEach(product=>{ %>
-        <option
-        data-name="<%= product.description %>"
-        data-price="<%= product.price %>"
-        data-cost="<%= product.cost %>"
-        data-id="<%= product.serial_no %>">
-        <%= product.description %>
-        </option>
-        <% }) %>
-        </select>
+                <option value="">Select Product</option>
+                <% products[category].forEach(product => { %>
+                <option
+                    data-name="<%= product.description %>"
+                    data-price="<%= product.price %>"
+                    data-cost="<%= product.cost %>"
+                    data-id="<%= product.serial_no %>">
+                    <%= product.description %>
+                </option>
+                <% }) %>
+            </select>
+        </div>
+        </div>
         <!-- Selected Product List -->
         <div id="list-<%= category %>" class="product-list"></div>
         <hr>

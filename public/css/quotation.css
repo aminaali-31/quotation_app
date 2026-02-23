@@ -53,20 +53,38 @@ h3 {
 .left h3 {
     font-size:20px;
     font-weight:bold;
-    margin-top:25px;
 }
 /* Dropdown Styling */
-.product-select{
-    width:220px;
-    padding:8px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    margin-top:8px;
-    transition:0.2s;
+.product-picker {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 42px;
+}
+
+.add-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background: #0d6efd;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.product-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 42px;
+  height: 42px;
+  opacity: 0;     /* Invisible */
+  cursor: pointer;
 }
 
 .product-select:hover{
-    border-color:#4a90e2;
+    border-color:#639ee1;
 }
 
 /* Product List Box */
@@ -78,6 +96,7 @@ h3 {
     border-radius:8px;
     font-size:15px;
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
 }
 

@@ -45,23 +45,23 @@ function renderProductList(category) {
 
         let div = document.createElement("div");
         div.className = "product-row";
-        div.style.display = "flex";
-        div.style.gap = "10px";
         div.style.marginBottom = "8px";
 
         div.innerHTML = `
-            <span style="flex:2">${product.name}</span>
-
-            <input type="number"
+            <span style="display:flex; flex-direction:column;">
+            <span style="flex:2;">${product.name}</span>
+            <span><strong>Price:</strong> ${product.price.toLocaleString()}</span>
+            <span><strong>Cost:</strong> ${product.cost.toLocaleString()}</span>
+            </span>
+            <span>
+            <label>Qty:</label>
+             <input type="number"
                    min="1"
                    value="${product.qty}"
-                   style="width:70px"
+                   style="width:30px;height:30px;"
                    onchange="updateQty('${category}', ${product.id}, this.value)" />
-
-            <span>Price: ${product.price.toLocaleString()}</span>
-            <span>Cost: ${product.cost.toLocaleString()}</span>
-
             <button onclick="removeProduct('${category}', ${product.id})">X</button>
+            </span>
         `;
 
         listDiv.appendChild(div);
