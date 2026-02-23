@@ -186,11 +186,11 @@ app.get('/admin/quotations',isAdmin, (req,res) => {
                 console.log(err);
                 return res.status(500).send("Database error");
             }
-            res.render('quote-list', { quotations });
+            res.render('admin-quote', { quotations });
     });
 });
 
-app.get('admin/quotations/:id',isAdmin, (req, res) => {
+app.get('/admin/quotations/:id',isAdmin, (req, res) => {
     db.query(
     `SELECT id, quote_no, title, grand_total , last_updated
      FROM quotations 
@@ -214,7 +214,8 @@ app.get('admin/quotations/:id',isAdmin, (req, res) => {
                 qi.name,
                 qi.category,
                 qi.qty,
-                p.price
+                p.price,
+                p.cost
              FROM quotation_items qi
              LEFT JOIN products p 
              ON p.serial_no = qi.product_id
@@ -225,7 +226,7 @@ app.get('admin/quotations/:id',isAdmin, (req, res) => {
                 let total = items.reduce((sum, item) =>
                     sum + ((item.price || 0) * (item.qty || 0)),
                 0);
-                res.render('admin-quote', {
+                res.render('admin-qdetails', {
                     quotation: quotationResult[0],
                     items,
                     total
@@ -308,8 +309,9 @@ app.post("/admin/update-product/:id", isAdmin, (req,res)=>{
 
     const id = req.params.id;
 
-    const {description, price, cost, category} = req.body;
-
+    const {description, category} = req.body;
+    const price = req.body.price.replace(/,/g, "");
+    const cost = req.body.cost.replace(/,/g, "");
     db.query(
         `UPDATE products
          SET description=?, price=?, cost=?, category_id=?

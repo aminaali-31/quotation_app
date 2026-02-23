@@ -29,12 +29,13 @@
         <h6 class="fw-semibold mb-1" style="font-size: 30px; text-align: center;padding: 10px;">
             <%= quotation.title %>
         </h6>
-        <table cellpadding="10" class="table table-hover table-striped table-bordered align-middle">
+        <table cellpadding="10" class="table table-striped table-bordered align-middle">
         <thead>
         <tr>
             <th scope="col" class="text-start table-dark" id="prod">Product</th>
             <th scope="col" class="text-start table-dark" id="cat">Category</th>
             <th scope="col" class="text-center table-dark">Qty</th>
+            <th scope="col" class="text-end table-dark">Cost</th>
             <th scope="col" class="text-end table-dark">Unit Price</th>
             <th scope="col" class="text-end table-dark">Total</th>
         </tr>
@@ -45,6 +46,7 @@
             <th scope="row" class="text-start"><%= item.name %></th>
             <td class="text-start" id="cat"><%= item.category %></td>
             <td class="text-center"><%= item.qty %></td>
+            <td class="text-end"><%= item.cost.toLocaleString() %></td>
             <td class="text-end"><%= item.price.toLocaleString() %></td>
             <td class="text-end"><%= (item.price * item.qty).toLocaleString() %></td>
         </tr>

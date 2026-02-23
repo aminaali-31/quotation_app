@@ -58,7 +58,7 @@ function renderProductList(category) {
              <input type="number"
                    min="1"
                    value="${product.qty}"
-                   style="width:30px;height:30px;"
+                   style="width:50px;height:30px;"
                    onchange="updateQty('${category}', ${product.id}, this.value)" />
             <button onclick="removeProduct('${category}', ${product.id})">X</button>
             </span>

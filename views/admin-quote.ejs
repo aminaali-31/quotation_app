@@ -33,7 +33,7 @@
 <body>
     <%- include('nav') %>
     <main>
-        <h2>Published Quotations</h2>
+        <h2>All Quotations</h2>
         <p id="text">Explore our wide range of quotations</p>
         <div class="quotation-grid">
         <% quotations.forEach(q => { %>
@@ -51,5 +51,6 @@
         <% }) %>
         </div>
     </main>
+    <%- include('footer') %>
 </body>
 </html>

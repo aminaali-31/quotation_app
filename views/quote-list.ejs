@@ -41,15 +41,16 @@
                 <p class="card-header">Quote no. <%= q.quote_no %></p>
                 <div class="card-body">
                 <h3 class="card-title"><%= q.title %></h3>
-                <p class="card-text"><strong>Estimated Price:</strong> <%= q.grand_total.toLocaleString() %></p>
+                <p class="card-text" style="color:rgb(31, 31, 251)"><strong style="color:black">Estimated Price:</strong> <%= q.grand_total.toLocaleString() %></p>
                 <a href="/quotations/<%= q.quote_no %>" class="btn btn-primary">View</a>
                 </div>
                 <div class="card-footer text-body-secondary">
-                    <strong>Last Updated:</strong><%= new Date(q.last_updated).toDateString() %>
+                    <strong>Last Updated: </strong><%= new Date(q.last_updated).toDateString() %>
                 </div>
             </div>
         <% }) %>
         </div>
     </main>
+    <%- include('footer') %>
 </body>
 </html>
