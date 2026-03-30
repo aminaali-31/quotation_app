@@ -398,3 +398,15 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+process.on("SIGTERM", async () => {
+  console.log("Shutting down gracefully...");
+  await db.end(); // close all connections in the pool
+  process.exit(0);
+});
+
+process.on("SIGINT", async () => {
+  console.log("Interrupted, shutting down...");
+  await db.end();
+  process.exit(0);
+});

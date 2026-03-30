@@ -91,11 +91,12 @@ h3 {
 .product-list div{
     background:#fafafa;
     border:1px solid #eee;
-    padding:8px;
+    padding:5px;
     margin-top:6px;
     border-radius:8px;
     font-size:15px;
     display: flex;
+    gap:5px;
     align-items: flex-start;
     justify-content: space-between;
 }

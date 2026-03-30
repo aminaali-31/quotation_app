@@ -48,17 +48,17 @@ function renderProductList(category) {
         div.style.marginBottom = "8px";
 
         div.innerHTML = `
-            <span style="display:flex; flex-direction:column;">
+            <span style="display:flex; flex-direction:column; flex-shrink:1">
             <span style="flex:2;">${product.name}</span>
             <span><strong>Price:</strong> ${product.price.toLocaleString()}</span>
             <span><strong>Cost:</strong> ${product.cost.toLocaleString()}</span>
             </span>
-            <span>
+            <span style="display:flex;gap:5px;">
             <label>Qty:</label>
              <input type="number"
                    min="1"
                    value="${product.qty}"
-                   style="width:50px;height:30px;"
+                   style="width:40px;height:30px;"
                    onchange="updateQty('${category}', ${product.id}, this.value)" />
             <button onclick="removeProduct('${category}', ${product.id})">X</button>
             </span>
@@ -134,9 +134,9 @@ function downloadQuotation() {
     totalPrice = 0;
     const quotationNumber = "QT-" + Date.now();
     const date = new Date().toLocaleDateString();
-    const companyName = "Your Company Name";
-    const companyAddress = "Your Address Line";
-    const companyPhone = "+92-XXX-XXXXXXX";
+    const companyName = "Maqsolar";
+    const companyAddress = "41-GC F block Pak arab";
+    const companyPhone = "+92-321-4776991";
     // Convert cart object into table rows
     Object.keys(cart).forEach(category => {
 
@@ -153,7 +153,7 @@ function downloadQuotation() {
                 product.name,
                 product.qty,
                 product.price.toLocaleString(),
-                subtotal.Price.toLocaleString()
+                subtotalPrice.toLocaleString()
             ]);
         });
 
@@ -172,7 +172,7 @@ function downloadQuotation() {
     doc.text("QUOTATION", 150, 20);
 
     doc.setFontSize(10);
-    doc.text("Quotation No: " + quotationNumber, 150, 26);
+    doc.text(quotationNumber, 150, 26);
     doc.text("Date: " + date, 150, 31);
 
     // Table
@@ -183,19 +183,18 @@ function downloadQuotation() {
         theme: "grid",
         styles: { fontSize: 9 }
     });
-
-    let finalY = doc.lastAutoTable.finalY + 10;
+    let finalY = doc.lastAutoTable.finalY + 5;
 
     // Summary
-    doc.setFontSize(12);
-    doc.text(`Total Price: ${totalPrice.toLocaleString()}`, 14, finalY);
-    
+    doc.setFontSize(11);
+    doc.text(`Total Price:  ${totalPrice.toLocaleString()}`,150,finalY);
+    doc.line(150, finalY + 35, 150+30, finalY + 35);
     doc.line(14, finalY + 35, 70, finalY + 35);
     doc.text("Authorized Signature", 14, finalY + 40);
 
     // ======= Footer =======
     doc.setFontSize(8);
-    doc.text("Thank you for your business.", 14, 285);
+    doc.text("Thank you.", 14, 285);
 
     doc.save("Quotation-" + quotationNumber + ".pdf");
 }
